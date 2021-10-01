@@ -11,7 +11,12 @@ import time
 
 def check_word_in_website(website_name, url, words):
     """Checks if the word is in the url's html-text."""
-    site = str(urllib.request.urlopen(url).read())
+    try:
+        site = str(urllib.request.urlopen(url).read())
+    except Exception:
+        notify(f"Problem! Could not get html text of {website_name}!", " ")
+        return
+
     for word in words:
         if word in site:
             print(f"'{word}' found on {website_name}")
