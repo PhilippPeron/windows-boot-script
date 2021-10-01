@@ -5,14 +5,21 @@ Functionality:
 """
 
 import urllib.request
+import urllib.error
 from win10toast import ToastNotifier
-import time
+import ssl
 
 
 def check_word_in_website(website_name, url, words):
     """Checks if the word is in the url's html-text."""
     try:
+        # Retrieve html text from the url
         site = str(urllib.request.urlopen(url).read())
+    except urllib.error.URLError:  # Catch failing SSL verification
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        site = str(urllib.request.urlopen(url, context=ctx).read())
     except Exception:
         notify(f"Problem! Could not get html text of {website_name}!", " ")
         return
